@@ -94,7 +94,7 @@ inline void post_membar(atomic_memory_order order) {
 
 
 template<size_t byte_size>
-struct AtomicAccess::PlatformAdd {
+struct Atomic::PlatformAdd {
   template<typename D, typename I>
   D add_then_fetch(D volatile* dest, I add_value, atomic_memory_order order) const;
 
@@ -106,7 +106,7 @@ struct AtomicAccess::PlatformAdd {
 
 template<>
 template<typename D, typename I>
-inline D AtomicAccess::PlatformAdd<4>::add_then_fetch(D volatile* dest, I add_value,
+inline D Atomic::PlatformAdd<4>::add_then_fetch(D volatile* dest, I add_value,
                                                       atomic_memory_order order) const {
   STATIC_ASSERT(4 == sizeof(I));
   STATIC_ASSERT(4 == sizeof(D));
@@ -133,7 +133,7 @@ inline D AtomicAccess::PlatformAdd<4>::add_then_fetch(D volatile* dest, I add_va
 
 template<>
 template<typename D, typename I>
-inline D AtomicAccess::PlatformAdd<8>::add_then_fetch(D volatile* dest, I add_value,
+inline D Atomic::PlatformAdd<8>::add_then_fetch(D volatile* dest, I add_value,
                                                       atomic_memory_order order) const {
   STATIC_ASSERT(8 == sizeof(I));
   STATIC_ASSERT(8 == sizeof(D));
@@ -159,7 +159,7 @@ inline D AtomicAccess::PlatformAdd<8>::add_then_fetch(D volatile* dest, I add_va
 
 template<>
 template<typename T>
-inline T AtomicAccess::PlatformXchg<4>::operator()(T volatile* dest,
+inline T Atomic::PlatformXchg<4>::operator()(T volatile* dest,
                                                    T exchange_value,
                                                    atomic_memory_order order) const {
   STATIC_ASSERT(4 == sizeof(T));
@@ -195,7 +195,7 @@ inline T AtomicAccess::PlatformXchg<4>::operator()(T volatile* dest,
 
 template<>
 template<typename T>
-inline T AtomicAccess::PlatformXchg<8>::operator()(T volatile* dest,
+inline T Atomic::PlatformXchg<8>::operator()(T volatile* dest,
                                                    T exchange_value,
                                                    atomic_memory_order order) const {
   STATIC_ASSERT(8 == sizeof(T));
@@ -231,7 +231,7 @@ inline T AtomicAccess::PlatformXchg<8>::operator()(T volatile* dest,
 
 template<>
 template<typename T>
-inline T AtomicAccess::PlatformCmpxchg<1>::operator()(T volatile* dest,
+inline T Atomic::PlatformCmpxchg<1>::operator()(T volatile* dest,
                                                       T compare_value,
                                                       T exchange_value,
                                                       atomic_memory_order order) const {
@@ -279,7 +279,7 @@ inline T AtomicAccess::PlatformCmpxchg<1>::operator()(T volatile* dest,
 
 template<>
 template<typename T>
-inline T AtomicAccess::PlatformCmpxchg<4>::operator()(T volatile* dest,
+inline T Atomic::PlatformCmpxchg<4>::operator()(T volatile* dest,
                                                       T compare_value,
                                                       T exchange_value,
                                                       atomic_memory_order order) const {
@@ -325,7 +325,7 @@ inline T AtomicAccess::PlatformCmpxchg<4>::operator()(T volatile* dest,
 
 template<>
 template<typename T>
-inline T AtomicAccess::PlatformCmpxchg<8>::operator()(T volatile* dest,
+inline T Atomic::PlatformCmpxchg<8>::operator()(T volatile* dest,
                                                       T compare_value,
                                                       T exchange_value,
                                                       atomic_memory_order order) const {
@@ -370,11 +370,11 @@ inline T AtomicAccess::PlatformCmpxchg<8>::operator()(T volatile* dest,
 }
 
 template<size_t byte_size>
-struct AtomicAccess::PlatformOrderedLoad<byte_size, X_ACQUIRE>
+struct Atomic::PlatformOrderedLoad<byte_size, X_ACQUIRE>
 {
   template <typename T>
   T operator()(const volatile T* p) const {
-    T t = AtomicAccess::load(p);
+    T t = Atomic::load(p);
     // Use twi-isync for load_acquire (faster than lwsync).
     __asm__ __volatile__ ("twi 0,%0,0\n isync\n" : : "r" (t) : "memory");
     return t;
@@ -382,7 +382,7 @@ struct AtomicAccess::PlatformOrderedLoad<byte_size, X_ACQUIRE>
 };
 
 template<>
-class AtomicAccess::PlatformBitops<4, true> {
+class Atomic::PlatformBitops<4, true> {
 public:
   template<typename T>
   T fetch_then_and(T volatile* dest, T bits, atomic_memory_order order) const {
@@ -515,7 +515,7 @@ public:
 };
 
 template<>
-class AtomicAccess::PlatformBitops<8, true> {
+class Atomic::PlatformBitops<8, true> {
 public:
   template<typename T>
   T fetch_then_and(T volatile* dest, T bits, atomic_memory_order order) const {
