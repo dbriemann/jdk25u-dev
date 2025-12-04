@@ -59,7 +59,7 @@ public class TestJhsdbJstackWithVirtualThread {
         System.out.println(out.getStdout());
         System.err.println(out.getStderr());
 
-        out.stderrShouldBeEmptyIgnoreDeprecatedWarnings();
+        out.stderrShouldBeEmptyIgnoreVMWarnings();
         out.shouldNotContain("must have non-zero frame size");
     }
 
